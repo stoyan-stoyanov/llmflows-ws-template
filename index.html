@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="static/favicon.png" type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/db9ed7e340.js" crossorigin="anonymous"></script>
+    <title>LLM-99 | Physics explained</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh !important;
+        }
+        .subheading {
+            color: #aaa;
+        }
+        .text-center {
+            margin-top:50px;
+        }
+        .submit-button {
+            width: 100px;
+        }
+
+        .custom-container {
+            max-width: 1000px;
+
+        }
+
+        .llm {
+            color: #ba1200;
+        }
+
+        .flows {
+            color: #9b287b;
+        }
+
+        .navbar-link {
+            text-decoration: none;
+        }
+
+        .card-link {
+            text-decoration: none;
+        }
+
+        .footer-link {
+            margin: 0 10px;
+            text-decoration: none;
+        }
+
+        .question {
+            margin-top: 30px;
+        }
+        
+        .example-question {
+            border: 1px solid #343a40;
+            border-radius: 5px;
+            padding: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .example-questions-heading {
+            margin-top: 30px;
+        }
+
+        .example-question:hover {
+            background-color: #343a40;
+        }
+
+        #chat-history {
+            overflow-y: auto;
+        }
+
+        #outer-container {
+            overflow-y: auto;
+            max-height: 95vh; /* Adjust this value */
+        }
+
+        #chat-container {
+            max-width: 1000px; /* This is your existing style */
+            margin: 0 auto;   /* This centers the content */
+            height: 100%;    /* Take full height */
+            padding-bottom: 0px !important;
+        }
+
+        .avatar {
+            font-size: 24px; 
+            margin-right: 15px;
+            align-self: flex-start; /* align to the top of the container */
+        }
+
+        .chat-message {
+            margin-bottom: 25px;
+            display: flex;
+            align-items: flex-start; /* ensure items align to the top */
+        }
+
+        .chat-message .card {
+            flex-grow: 1;
+            /* min-width: 300px; !important; */
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar fixed-top bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="https://github.com/stoyan-stoyanov/llmflows" target="_blank"><span class="llm">LLM</span><span class="flows">Flows</span> ❤️  🤖</a>
+            <a href="https://github.com/stoyan-stoyanov/llmflows" target="_blank" class="link-light navbar-link"><i class="fab fa-github"></i> GitHub</a>
+        </div>
+        
+    </nav>
+    <div id="outer-container">
+        <div class="container custom-container py-5" id="chat-container">
+            <div class="text-center mb-5">
+                <h1>🤖 brain-1</h1>
+                <h4 class="subheading">LLM Agent</h4>
+            </div>
+
+            <div id="chat-history" class="row mt-5 g-4">
+                <!-- Chat messages will be dynamically inserted here -->
+            </div>
+
+            <h5 class="example-questions-heading">Example questions</h5>
+
+            <!-- Desktop Version - 3 examples -->
+            <div class="row g-4 example-questions-row d-none d-md-flex" id="example-questions-desktop">
+                <div class="col-md-4">
+                    <div class="example-question"><span>What is quantum mechanics?</span></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="example-question"><span>What is a black hole?</span></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="example-question"><span>What are superconductors?</span></div>
+                </div>
+            </div>
+
+
+            <!-- Mobile Version - Single example -->
+            <div class="row g-4 example-questions-row d-md-none" id="example-questions-mobile">
+                <div class="col-12">
+                    <div class="example-question"><span>What is quantum mechanics?</span></div>
+                </div>
+            </div>
+
+            <form class="question" id="question-form" class="mb-3">
+                <div class="input-group">
+                    <input type="text" id="question-input" class="form-control form-control-dark" placeholder="Type your question..." required>
+                    <button type="submit" id="ask-button" class="btn btn-primary submit-button">Ask</button>
+                </div>
+            </form>
+
+            
+
+            <div class="text-center">
+                <a href="https://github.com/stoyan-stoyanov/llmflows" target="_blank" class="link-light footer-link"><i class="fab fa-github"></i> LLMFlows on Github</a>
+                <a href="https://llmflows.readthedocs.io/en/latest/" target="_blank" class="link-light footer-link"><i class="fa-solid fa-book"></i> Documentation</a>
+                <a href="https://llmflows.substack.com/" target="_blank" class="link-light footer-link"><i class="fa-solid fa-bookmark"></i> Substack</a>
+                <a href="https://twitter.com/LLMFlows" target="_blank" class="link-light footer-link"><i class="fab fa-twitter"></i> LLMFlows on Twitter</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Functions
+        function scrollToBottom(element) {
+            let step = 10;
+            let distanceToScroll = element.scrollHeight - element.scrollTop;
+
+            function scrollDown() {
+                element.scrollBy(0, step);
+                distanceToScroll -= step;
+
+                if (distanceToScroll > 0) {
+                    requestAnimationFrame(scrollDown);
+                }
+            }
+
+            requestAnimationFrame(scrollDown);
+        }
+
+        function appendUserMessage(message) {
+            const chatHistory = document.getElementById('chat-history');
+            
+            let chatMessage = `
+                <div class="col-12 chat-message">
+                    <span class="avatar">😊</span>
+                    <div class="card bg-dark border-primary">
+                        <div class="card-header">
+                            You
+                        </div>
+                        <div class="card-body">
+                            ${message}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            chatHistory.innerHTML += chatMessage;
+            scrollToBottom(document.getElementById('outer-container'));
+        }
+
+        function appendResponse(data) {
+            const chatHistory = document.getElementById('chat-history');
+            
+            let sourcesList = '';
+            if (data.sources && data.sources.length) {
+                // Remove duplicate sources based on the 'link' property
+                let uniqueSources = data.sources.filter((source, index, self) =>
+                    index === self.findIndex((s) => (
+                        s.link === source.link
+                    ))
+                );
+
+                // Generate the list of sources
+                sourcesList = '<div class="card-footer">';
+                uniqueSources.forEach(source => {
+                    sourcesList += `
+                        <a href="${source.link}" class="card-link" target="_blank">
+                            <i class="fa-brands fa-wikipedia-w"></i> ${source.page_title}
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                    `;
+                });
+                sourcesList += '</div>';
+            }
+
+            const eli5AnswerCard = `
+                <div class="col-12 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">💡 ELI5</h5>
+                            ${data.eli5_answer}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const answerCard = `
+                <div class="col-12 chat-message">
+                    <span class="avatar">🤖</span>
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-header bg-dark">brain-1</div>
+                        <div class="card-body">
+                            ${data.answer}
+                        </div>
+                        ${sourcesList}
+                    </div>
+                </div>
+            `;
+
+            chatHistory.innerHTML += answerCard;
+            scrollToBottom(document.getElementById('outer-container'));
+        }
+
+        // WebSockets
+        const socket = new WebSocket("ws://localhost:9000/ws/");
+
+        // When a message is received from the WebSocket server
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            appendResponse(data);
+
+            const questionInput = document.getElementById('question-input');
+            const askButton = document.getElementById('ask-button');
+
+            questionInput.disabled = false;
+            questionInput.value = '';  // clear the input
+            askButton.disabled = false;
+            askButton.textContent = 'Ask';
+        };
+
+        // Error handling
+        socket.onerror = function(error) {
+            console.error("WebSocket Error: ", error);
+        };
+
+        socket.onclose = function(event) {
+            if (event.wasClean) {
+                console.log(`Connection closed cleanly, code=${event.code}, reason=${event.reason}`);
+            } else {
+                console.error('Connection died');
+            }
+
+            setTimeout(() => {
+                console.log("Attempting to reconnect...");
+                socket = new WebSocket("ws://localhost:9000/ws/");
+            }, 5000);  // Try to reconnect every 5 seconds
+        };
+
+        document.getElementById('question-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const questionInput = document.getElementById('question-input');
+            const question = questionInput.value;
+            const askButton = document.getElementById('ask-button');
+
+            appendUserMessage(question);
+
+            questionInput.disabled = true;
+            askButton.disabled = true;
+            askButton.innerHTML = `
+                <div class="spinner-border spinner-border-sm" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            `;
+
+            socket.send(question);
+        });
+
+        document.querySelectorAll('.example-question').forEach(div => {
+            div.addEventListener('click', function() {
+                const questionText = this.querySelector('span').textContent;
+                document.getElementById('question-input').value = questionText;
+            });
+        });
+
+    </script>
+</body>
+</html>
