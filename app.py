@@ -25,6 +25,7 @@ async def websocket_endpoint(websocket: WebSocket):
         " I can answer physics-related questions by utilizing RAG over a vector store"
         " of Wikipedia articles. Try asking me a question!"
     )
+
     await websocket.accept()
     await websocket.send_json({"answer": greeting, "eli5_answer": " ", "sources": None})
 
