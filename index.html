@@ -255,7 +255,7 @@
         }
 
         // WebSockets
-        const socket = new WebSocket("ws://localhost:8000/ws/");
+        const socket = new WebSocket("ws://0.0.0.0/ws/");
         // When a message is received from the WebSocket server
         socket.onmessage = function(event) {
             const data = JSON.parse(event.data);
