@@ -26,7 +26,7 @@ async def websocket_endpoint(websocket: WebSocket):
         " of Wikipedia articles. Try asking me a question!"
     )
     await websocket.accept()
-    await websocket.send_json({"answer": "greeting", "eli5_answer": " ", "sources": None})
+    await websocket.send_json({"answer": greeting, "eli5_answer": " ", "sources": None})
 
     while True:
         data = await websocket.receive_text()
