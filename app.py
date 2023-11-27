@@ -20,8 +20,14 @@ async def read_index(request: Request):
 
 @app.websocket("/ws/")
 async def websocket_endpoint(websocket: WebSocket):
+    greeting = (
+        "Hello there, this is DemoBot, a demo chatbot built with LLMFlows and FastAPI."
+        " I can answer physics-related questions by utilizing RAG over a vector store"
+        " of Wikipedia articles. Try asking me a question!"
+    )
     await websocket.accept()
-    await websocket.send_json({"answer": "hi", "eli5_answer": "haha", "sources": None})
+    await websocket.send_json({"answer": "greeting", "eli5_answer": " ", "sources": None})
+
     while True:
         data = await websocket.receive_text()
         question = data
@@ -45,9 +51,7 @@ async def answer_question(question: str):
         articles.
     """
     rag_flow = create_flow()
-    result = rag_flow.start(
-        conversation_history="", question=question, verbose=True
-    )
+    result = rag_flow.start(conversation_history="", question=question, verbose=True)
 
     answer = result["Answer Flowstep"]["generated"]
     eli5_answer = result["ELI5 Flowstep"]["generated"]
