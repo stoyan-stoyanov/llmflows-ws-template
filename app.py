@@ -55,7 +55,3 @@ async def answer_question(question: str):
     sources = [match["metadata"] for match in vector_store_results["matches"]]
 
     return {"answer": answer, "eli5_answer": eli5_answer, "sources": sources}
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=9000)
