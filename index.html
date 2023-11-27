@@ -255,7 +255,7 @@
         }
 
         // WebSockets
-        const socket = new WebSocket("ws://0.0.0.0/ws/");
+        const socket = new WebSocket("wss://0.0.0.0/ws/");
         // When a message is received from the WebSocket server
         socket.onmessage = function(event) {
             const data = JSON.parse(event.data);
@@ -284,7 +284,7 @@
 
             setTimeout(() => {
                 console.log("Attempting to reconnect...");
-                socket = new WebSocket("ws://localhost:8000/ws/");
+                socket = new WebSocket("wss://0.0.0.0/ws/");
             }, 5000);  // Try to reconnect every 5 seconds
         };
 
