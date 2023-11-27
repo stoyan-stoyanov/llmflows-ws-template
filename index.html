@@ -255,9 +255,10 @@
         }
 
         // WebSockets
-        const port = process.env.PORT
-        console.log(port)
-        const socket = new WebSocket("wss://0.0.0.0:" + port + "/ws/");
+        // Determine the correct protocol and host for WebSocket connection
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const host = window.location.host;
+        const socket = new WebSocket(`${protocol}//${host}/ws/`);
         // When a message is received from the WebSocket server
         socket.onmessage = function(event) {
             const data = JSON.parse(event.data);
@@ -286,7 +287,7 @@
 
             setTimeout(() => {
                 console.log("Attempting to reconnect...");
-                socket = new WebSocket("wss://0.0.0.0:" + port + "/ws/");
+                socket = new WebSocket(`${protocol}//${host}/ws/`);
             }, 5000);  // Try to reconnect every 5 seconds
         };
 
